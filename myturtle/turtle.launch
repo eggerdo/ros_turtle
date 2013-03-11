@@ -1,0 +1,5 @@
+<launch>
+  
+  <include file="$(find turtlebot_bringup)/minimal.launch" />
+
+</launch>
