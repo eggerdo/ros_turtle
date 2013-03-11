@@ -1,0 +1,20 @@
+<package>
+  <description brief="turtle_compass">
+
+     turtle_compass
+
+  </description>
+  <author>dominik</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/turtle_compass</url>
+  <depend package="rospy"/>
+  <depend package="tf"/>  
+  <depend package="nav_msgs"/>
+  <depend package="geometry_msgs"/>
+  <depend package="diagnostic_msgs"/>
+  <depend package="kdl"/>
+  
+</package>
+
+

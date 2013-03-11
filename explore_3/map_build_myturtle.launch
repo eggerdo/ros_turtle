@@ -1,0 +1,16 @@
+<launch>
+
+  <include file="$(find myturtle)/launch/turtle.launch" />
+
+  <include file="$(find myturtle)/launch/gmapping.launch" />
+
+  <include file="$(find myturtle)/launch/move_base_navigation.launch" />
+
+  <node pkg="rviz" type="rviz" name="rviz" 
+    args="-d $(find myturtle)/nav_rviz.vcg"/>
+<!--
+    args="-d $(find turtlebot_navigation)/nav_rviz.vcg"/>
+-->
+
+</launch>
+

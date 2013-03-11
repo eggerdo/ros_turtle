@@ -1,0 +1,11 @@
+<launch>
+
+  <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser" 
+    args="0.0 0.0 0.0 0.0 0.0 0.0 base_link openni_camera 100" />
+
+  <node name="turtle_handler" pkg="myturtle" type="turtle_handler.py" output="screen" respawn="true" >
+	<param name="max_rate" value="20.0"/>
+	<param name="address" value="00:06:66:07:AE:BF" />
+  </node>
+
+</launch>

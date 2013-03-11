@@ -1,0 +1,16 @@
+explore_costmap:
+  global_frame: /map
+  robot_base_frame: /base_link
+  update_frequency: 5.0
+  publish_frequency: 5.0
+  raytrace_range: 4.0
+  obstacle_range: 2.5
+  static_map: false
+  rolling_window: false
+  # try rolling window = true
+  width: 24.0
+  height: 24.0
+  resolution: 0.05
+  origin_x: -12.0
+  origin_y: -12.0
+  track_unknown_space: true

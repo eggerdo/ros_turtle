@@ -1,0 +1,16 @@
+<package>
+  <description brief="turtle_slam">
+
+     turtle_slam
+
+  </description>
+  <author>dominik</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/turtle_slam</url>
+  <depend package="rospy"/>
+  <depend package="tf"/>
+
+</package>
+
+

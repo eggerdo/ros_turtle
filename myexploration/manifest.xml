@@ -1,0 +1,14 @@
+<package>
+  <description brief="myexploration">
+
+     myexploration
+
+  </description>
+  <author>dominik</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/myexploration</url>
+
+</package>
+
+

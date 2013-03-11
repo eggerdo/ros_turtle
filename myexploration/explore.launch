@@ -1,0 +1,32 @@
+<launch>
+	<param name="/use_sim_time" value="false"/>
+
+<!-- 	<node name="gmapping_node" pkg="gmapping" type="slam_gmapping" respawn="false" >
+		<remap to="base_scan" from="scan"/>
+		<param name="maxUrange" value="3.75" />
+		<param name="map_update_interval" value = "3.0" />
+		<param name="particles" value = "60" />
+		<param name="maxRange" value = "5.0" />
+		<param name="ogain" value = "0.8" />
+		<param name="srr" value="0.01"/>
+		<param name="srt" value="0.02"/>
+		<param name="str" value="0.01"/>
+		<param name="stt" value="0.02"/>
+		<param name="delta" value="0.05" />
+	</node>  --> 
+	
+	<node name = "frontier" pkg = "turtlebot_frontier" type = "turtlebot_frontier" output="screen" />
+
+	<node name="turtlebot_nav" pkg="turtlebot_slam_navigation" type="turtlebot_slam_navigation" output="screen" />
+
+	<node name = "exploration_node" pkg="turtlebot_exploration" type = "turtlebot_exploration" respawn = "false" output="screen" />   
+
+	<node name="tiny_slam" pkg="turtlebot_tiny_slam" type="turtlebot_tiny_slam" output="screen" args="-d scan:=base_scan"/> -->  
+
+
+
+<!--exploration -->
+
+
+
+</launch>

@@ -1,0 +1,16 @@
+<package>
+  <description brief="myturtle">
+
+     myturtle
+
+  </description>
+  <author>dominik</author>
+  <license>BSD</license>
+  <depend package="rospy" />
+  <depend package="tf" />
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/myturtle</url>
+
+</package>
+
+

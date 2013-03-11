@@ -1,0 +1,11 @@
+<launch>
+  <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser" 
+    args="0.0 0.0 0.0 0.0 0.0 0.0 /base_link /laser 100" />
+
+  <node name="turtle_handler" pkg="myturtle" type="turtle_handler.py" output="screen">
+	<param name="max_rate" value="20"/>
+	<param name="address" value="00:06:66:07:AE:BF" />
+  </node>
+
+</launch>
+
