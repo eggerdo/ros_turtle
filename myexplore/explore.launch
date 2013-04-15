@@ -2,12 +2,12 @@
   
   <!-- <include file="$(find explore_2)/launch/gmapping.launch" /> -->
 
-  <include file="$(find explore_2)/launch/move_base_explore.launch" /> 
+  <include file="$(find myexplore)/launch/move_base_explore.launch" /> 
 
   <node pkg="explore" type="explore" respawn="false" name="explore" output="screen" >
-    <rosparam file="$(find explore_2)/config/footprint.yaml" command="load" />
-    <rosparam file="$(find explore_2)/config/costmap_common_params.yaml" command="load" ns="explore_costmap" />
-    <rosparam file="$(find explore_2)/config/explore_costmap.yaml" command="load" />
+    <rosparam file="$(find myexplore)/config/footprint.yaml" command="load" />
+    <rosparam file="$(find myexplore)/config/costmap_common_params.yaml" command="load" ns="explore_costmap" />
+    <rosparam file="$(find myexplore)/config/explore_costmap.yaml" command="load" />
 
     <param name="potential_scale" value="0.005"/>
     <param name="orientation_scale" value="0.0"/>
@@ -17,12 +17,12 @@
   </node>
  
 
-  <!-- <include file="$(find explore_2)/launch/move_base_navigation.launch" />
+  <!-- <include file="$(find myexplore)/launch/move_base_navigation.launch" />
 
   <node pkg="explore" type="explore" respawn="false" name="explore" output="screen" >
-    <rosparam file="$(find explore_2)/config/footprint.yaml" command="load" />
-    <rosparam file="$(find explore_2)/config/costmap_common_params.yaml" command="load" ns="explore_costmap" />
-    <rosparam file="$(find explore_2)/config/explore_costmap.yaml" command="load" />
+    <rosparam file="$(find myexplore)/config/footprint.yaml" command="load" />
+    <rosparam file="$(find myexplore)/config/costmap_common_params.yaml" command="load" ns="explore_costmap" />
+    <rosparam file="$(find myexplore)/config/explore_costmap.yaml" command="load" />
 
     <param name="potential_scale" value="0.005"/>
     <param name="orientation_scale" value="0.0"/>

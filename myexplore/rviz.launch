@@ -1,7 +1,7 @@
 <launch>
 
   <node pkg="rviz" type="rviz" name="rviz" 
-    args="-d $(find myturtle)/nav_rviz.vcg"/>
+    args="-d $(find myexplore)/nav_rviz.vcg"/>
 
 </launch>
 
