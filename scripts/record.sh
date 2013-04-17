@@ -1,8 +1,7 @@
-#/bin/bash
+#!/bin/bash
 
-
-if [ -n $1 ]; then
+if [ -n "$1" ]; then
 	SESSION="-o $1"
 fi
 
-rosbag record -q --split=1024 $SESSION scan narrow_scan odom diagnostics cmd_vel map
+rosbag record -q --split --size=1024 $SESSION scan narrow_scan odom diagnostics cmd_vel map tf
