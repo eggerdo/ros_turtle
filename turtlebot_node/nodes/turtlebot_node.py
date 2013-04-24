@@ -506,8 +506,15 @@ class TurtlebotNode(object):
 def connected_file():
     return os.path.join(roslib.rosenv.get_ros_home(), 'turtlebot-connected')
 
+def onShutdown():
+    global c
+    rospy.loginfo("set robot to passive on shutdown")
+    c.robot.passive()
+
 def turtlebot_main(argv):
+    global c
     c = TurtlebotNode()
+    rospy.on_shutdown(onShutdown)
     while not rospy.is_shutdown():
         try:
             # This sleep throttles reconnecting of the driver.  It
@@ -535,7 +542,6 @@ def turtlebot_main(argv):
             try:
                 os.remove(connected_file())
             except Exception: pass
-
 
 if __name__ == '__main__':
     turtlebot_main(sys.argv)

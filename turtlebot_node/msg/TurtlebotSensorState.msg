@@ -79,4 +79,8 @@ int32 requested_velocity  # m/s
 int32 requested_radius  # m
 int32 requested_right_velocity  # m/s
 int32 requested_left_velocity  # m/s
+int32 encoder_counts_right 
+int32 encoder_counts_left
+int32 distance_right
+int32 distance_left
 
