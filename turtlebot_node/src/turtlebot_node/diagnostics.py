@@ -175,7 +175,9 @@ class TurtlebotDiagnostics():
         stat.values = [KeyValue("Left Encoder", str(sensor_state.encoder_counts_left)),
                        KeyValue("Right Encoder", str(sensor_state.encoder_counts_right)),
                        KeyValue("Distance Left", str(sensor_state.distance_left)),
-                       KeyValue("Distance Right", str(sensor_state.distance_left))]
+                       KeyValue("Distance Right", str(sensor_state.distance_right)),
+                       KeyValue("Distance", str(sensor_state.distance)),
+                       KeyValue("Angle", str(sensor_state.angle))]
         diag.status.append(stat)
         #publish
         self.diag_pub.publish(diag)

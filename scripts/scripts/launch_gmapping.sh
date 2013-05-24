@@ -1,3 +1,3 @@
 #!/bin/bash
 
-roslaunch myturtle gmapping.launch
+roslaunch myturtle gmapping.launch $1

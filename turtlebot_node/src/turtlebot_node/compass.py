@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Software License Agreement (BSD License)
 #
 # Copyright (c) 2011, Willow Garage, Inc.
@@ -37,62 +38,102 @@ import math
 import copy
 import sensor_msgs.msg
 import PyKDL
+import json
+import time
+from SerialGateway import SerialGateway
 
-class TurtlebotGyro():
+class TurtleCompass():
     def __init__(self):
         self.cal_offset = 0.0
         self.orientation = 0.0
-        self.cal_buffer =[]
+        self.cal_buffer = []
         self.cal_buffer_length = 1000
+        self.orient_offset = 0.0
+        # self.cal_buffer =[]
+        # self.cal_buffer_length = 1000
         self.imu_data = sensor_msgs.msg.Imu(header=rospy.Header(frame_id="gyro_link"))
         self.imu_data.orientation_covariance = [1e6, 0, 0, 0, 1e6, 0, 0, 0, 1e-6]
         self.imu_data.angular_velocity_covariance = [1e6, 0, 0, 0, 1e6, 0, 0, 0, 1e-6]
         self.imu_data.linear_acceleration_covariance = [-1,0,0,0,0,0,0,0,0]
-        self.gyro_measurement_range = rospy.get_param('~gyro_measurement_range', 150.0) 
-        self.gyro_scale_correction = rospy.get_param('~gyro_scale_correction', 1.35)
+        # self.gyro_measurement_range = rospy.get_param('~gyro_measurement_range', 150.0) 
+        # self.gyro_scale_correction = rospy.get_param('~gyro_scale_correction', 1.35)
         self.imu_pub = rospy.Publisher('imu/data', sensor_msgs.msg.Imu)
-        self.imu_pub_raw = rospy.Publisher('imu/raw', sensor_msgs.msg.Imu)
+        # self.imu_pub_raw = rospy.Publisher('imu/raw', sensor_msgs.msg.Imu)
+
+        self.imu_diagnose_data = sensor_msgs.msg.Imu(header=rospy.Header(frame_id="gyro_link"))
+        self.imu_diagnose_data.orientation_covariance = [1e6, 0, 0, 0, 1e6, 0, 0, 0, 1e-6]
+        self.imu_diagnose_data.angular_velocity_covariance = [1e6, 0, 0, 0, 1e6, 0, 0, 0, 1e-6]
+        self.imu_diagnose_data.linear_acceleration_covariance = [-1,0,0,0,0,0,0,0,0]
+        self.imu_diagnose_pub = rospy.Publisher('imu_diagnose', sensor_msgs.msg.Imu)
+
+        self.port = rospy.get_param('~compass_port', '/dev/ttyACM0')
+        self.baudRate = rospy.get_param('~baudRate', 115200)
+        self.serialHandler = SerialGateway(self.port, self.baudRate, self.handleSerial)
+
+    def Start(self):
+        self.serialHandler.Start()
+
+    def Stop(self):
+        self.serialHandler.Stop()
+
+    def handleSerial(self, line):
+        if (len(line) > 0):
+            # rospy.loginfo("received: %s" %line)
+            try:
+                self.data = json.loads(line)
+                self.imu_diagnose_data.header.stamp = rospy.Time.now()
+                (self.imu_diagnose_data.orientation.x, self.imu_diagnose_data.orientation.y, self.imu_diagnose_data.orientation.z, self.imu_diagnose_data.orientation.w) = PyKDL.Rotation.RotZ(self.data['compass']['heading']*(math.pi/180.0)).GetQuaternion()
+                self.imu_diagnose_data.angular_velocity.x = float(self.data['gyro']['x']*(math.pi/180.0))
+                self.imu_diagnose_data.angular_velocity.y = float(self.data['gyro']['y']*(math.pi/180.0))
+                self.imu_diagnose_data.angular_velocity.z = float(self.data['gyro']['z']*(math.pi/180.0))
+                self.imu_diagnose_data.linear_acceleration.x = float(self.data['accelero']['x']*9.81)
+                self.imu_diagnose_data.linear_acceleration.y = float(self.data['accelero']['y']*9.81)
+                self.imu_diagnose_data.linear_acceleration.z = float(self.data['accelero']['z']*9.81)
+                self.imu_diagnose_pub.publish(self.imu_diagnose_data)
+            except Exception, e:
+                print e
+            # self.heading = float(line)
+            return
 
     def reconfigure(self, config, level): 
-        self.gyro_measurement_range = rospy.get_param('~gyro_measurement_range', 150.0) 
-        self.gyro_scale_correction = rospy.get_param('~gyro_scale_correction', 1.35) 
-        rospy.loginfo('self.gyro_measurement_range %f'%self.gyro_measurement_range) 
-        rospy.loginfo('self.gyro_scale_correction %f'%self.gyro_scale_correction) 
+        # self.gyro_measurement_range = rospy.get_param('~gyro_measurement_range', 150.0) 
+        # self.gyro_scale_correction = rospy.get_param('~gyro_scale_correction', 1.35) 
+        self.port = rospy.get_param('~compass_port', '/dev/ttyACM0')
+        self.baudRate = rospy.get_param('~baudRate', 115200)
+        # rospy.loginfo('self.gyro_measurement_range %f' %self.gyro_measurement_range) 
+        # rospy.loginfo('self.gyro_scale_correction %f' %self.gyro_scale_correction) 
+        rospy.loginfo('compass port %s' %self.port) 
+        rospy.loginfo('compass baudRate %d' %self.baudRate)
+
+        self.Start()
 
     def update_calibration(self, sensor_state):
-        #check if we're not moving and update the calibration offset
-        #to account for any calibration drift due to temperature
+        # check if we're not moving and update the calibration offset
+        # to account for any calibration drift due to temperature
         if sensor_state.requested_right_velocity == 0 and \
                sensor_state.requested_left_velocity == 0 and \
                sensor_state.distance == 0:
         
-            self.cal_buffer.append(sensor_state.user_analog_input)
+            self.cal_buffer.append(self.data['gyro']['z'])
             if len(self.cal_buffer) > self.cal_buffer_length:
                 del self.cal_buffer[:-self.cal_buffer_length]
             self.cal_offset = sum(self.cal_buffer)/len(self.cal_buffer)
+        pass
             
     def publish(self, sensor_state, last_time):
         if self.cal_offset == 0:
+            self.orient_offset = self.data['compass']['heading']
             return
 
         current_time = sensor_state.header.stamp
+
         dt = (current_time - last_time).to_sec()
-        past_orientation = self.orientation
+        # self.orientation = -1.0 * (self.data['compass']['heading'] - self.orient_offset)*(math.pi/180.0)
         self.imu_data.header.stamp =  sensor_state.header.stamp
-        self.imu_data.angular_velocity.z  = (float(sensor_state.user_analog_input)-self.cal_offset)/self.cal_offset*self.gyro_measurement_range*(math.pi/180.0)*self.gyro_scale_correction
-        #sign change
-        self.imu_data.angular_velocity.z = -1.0*self.imu_data.angular_velocity.z
+        self.imu_data.angular_velocity.z = float(self.data['gyro']['z'] - self.cal_offset)*(math.pi/180.0)
+
         self.orientation += self.imu_data.angular_velocity.z * dt
+
         #print orientation
         (self.imu_data.orientation.x, self.imu_data.orientation.y, self.imu_data.orientation.z, self.imu_data.orientation.w) = PyKDL.Rotation.RotZ(self.orientation).GetQuaternion()
         self.imu_pub.publish(self.imu_data)
-
-        self.imu_data.header.stamp =  sensor_state.header.stamp
-        self.imu_data.angular_velocity.z  = (float(sensor_state.user_analog_input)/self.gyro_measurement_range*(math.pi/180.0)*self.gyro_scale_correction)
-        #sign change
-        self.imu_data.angular_velocity.z = -1.0*self.imu_data.angular_velocity.z
-        raw_orientation = past_orientation + self.imu_data.angular_velocity.z * dt
-        #print orientation
-        (self.imu_data.orientation.x, self.imu_data.orientation.y, self.imu_data.orientation.z, self.imu_data.orientation.w) = PyKDL.Rotation.RotZ(raw_orientation).GetQuaternion()
-        self.imu_pub_raw.publish(self.imu_data)
-

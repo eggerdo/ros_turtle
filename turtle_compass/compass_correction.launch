@@ -1,0 +1,6 @@
+<launch>
+
+	<node name="turtle_compass_correction" pkg="turtle_compass" type="turtle_compass_correction.py" respawn="false" output="screen" >
+	</node>
+
+</launch>

@@ -7,7 +7,7 @@ import struct
 import std_msgs.msg
 
 class TurtlebotSensorState(genpy.Message):
-  _md5sum = "d8f8ec7fa031fc9cc88e8319cd08a785"
+  _md5sum = "1fdfcadd5c6c668d91a6b1a1fc2e1f39"
   _type = "turtlebot_node/TurtlebotSensorState"
   _has_header = True #flag to mark the presence of a Header object
   _full_text = """uint8 OI_MODE_OFF = 0
@@ -91,6 +91,10 @@ int32 requested_velocity  # m/s
 int32 requested_radius  # m
 int32 requested_right_velocity  # m/s
 int32 requested_left_velocity  # m/s
+int32 encoder_counts_right 
+int32 encoder_counts_left
+int32 distance_right
+int32 distance_left
 
 
 ================================================================================
@@ -149,8 +153,8 @@ string frame_id
   CHARGING_WAITING = 4
   CHARGING_CHARGING_ERROR = 5
 
-  __slots__ = ['header','bumps_wheeldrops','wall','cliff_left','cliff_front_left','cliff_front_right','cliff_right','virtual_wall','motor_overcurrents','dirt_detector_left','dirt_detector_right','remote_opcode','buttons','distance','angle','charging_state','voltage','current','temperature','charge','capacity','wall_signal','cliff_left_signal','cliff_front_left_signal','cliff_front_right_signal','cliff_right_signal','user_digital_outputs','user_digital_inputs','user_analog_input','charging_sources_available','oi_mode','song_number','song_playing','number_of_stream_packets','requested_velocity','requested_radius','requested_right_velocity','requested_left_velocity']
-  _slot_types = ['std_msgs/Header','uint8','bool','bool','bool','bool','bool','bool','uint8','uint8','uint8','uint8','uint8','float64','float64','uint8','uint16','int16','int8','uint16','uint16','uint16','uint16','uint16','uint16','uint16','uint8','uint8','uint16','uint8','uint8','uint8','bool','uint8','int32','int32','int32','int32']
+  __slots__ = ['header','bumps_wheeldrops','wall','cliff_left','cliff_front_left','cliff_front_right','cliff_right','virtual_wall','motor_overcurrents','dirt_detector_left','dirt_detector_right','remote_opcode','buttons','distance','angle','charging_state','voltage','current','temperature','charge','capacity','wall_signal','cliff_left_signal','cliff_front_left_signal','cliff_front_right_signal','cliff_right_signal','user_digital_outputs','user_digital_inputs','user_analog_input','charging_sources_available','oi_mode','song_number','song_playing','number_of_stream_packets','requested_velocity','requested_radius','requested_right_velocity','requested_left_velocity','encoder_counts_right','encoder_counts_left','distance_right','distance_left']
+  _slot_types = ['std_msgs/Header','uint8','bool','bool','bool','bool','bool','bool','uint8','uint8','uint8','uint8','uint8','float64','float64','uint8','uint16','int16','int8','uint16','uint16','uint16','uint16','uint16','uint16','uint16','uint8','uint8','uint16','uint8','uint8','uint8','bool','uint8','int32','int32','int32','int32','int32','int32','int32','int32']
 
   def __init__(self, *args, **kwds):
     """
@@ -160,7 +164,7 @@ string frame_id
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       header,bumps_wheeldrops,wall,cliff_left,cliff_front_left,cliff_front_right,cliff_right,virtual_wall,motor_overcurrents,dirt_detector_left,dirt_detector_right,remote_opcode,buttons,distance,angle,charging_state,voltage,current,temperature,charge,capacity,wall_signal,cliff_left_signal,cliff_front_left_signal,cliff_front_right_signal,cliff_right_signal,user_digital_outputs,user_digital_inputs,user_analog_input,charging_sources_available,oi_mode,song_number,song_playing,number_of_stream_packets,requested_velocity,requested_radius,requested_right_velocity,requested_left_velocity
+       header,bumps_wheeldrops,wall,cliff_left,cliff_front_left,cliff_front_right,cliff_right,virtual_wall,motor_overcurrents,dirt_detector_left,dirt_detector_right,remote_opcode,buttons,distance,angle,charging_state,voltage,current,temperature,charge,capacity,wall_signal,cliff_left_signal,cliff_front_left_signal,cliff_front_right_signal,cliff_right_signal,user_digital_outputs,user_digital_inputs,user_analog_input,charging_sources_available,oi_mode,song_number,song_playing,number_of_stream_packets,requested_velocity,requested_radius,requested_right_velocity,requested_left_velocity,encoder_counts_right,encoder_counts_left,distance_right,distance_left
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -245,6 +249,14 @@ string frame_id
         self.requested_right_velocity = 0
       if self.requested_left_velocity is None:
         self.requested_left_velocity = 0
+      if self.encoder_counts_right is None:
+        self.encoder_counts_right = 0
+      if self.encoder_counts_left is None:
+        self.encoder_counts_left = 0
+      if self.distance_right is None:
+        self.distance_right = 0
+      if self.distance_left is None:
+        self.distance_left = 0
     else:
       self.header = std_msgs.msg.Header()
       self.bumps_wheeldrops = 0
@@ -284,6 +296,10 @@ string frame_id
       self.requested_radius = 0
       self.requested_right_velocity = 0
       self.requested_left_velocity = 0
+      self.encoder_counts_right = 0
+      self.encoder_counts_left = 0
+      self.distance_right = 0
+      self.distance_left = 0
 
   def _get_types(self):
     """
@@ -306,7 +322,7 @@ string frame_id
         length = len(_x)
       buff.write(struct.pack('<I%ss'%length, length, _x))
       _x = self
-      buff.write(_struct_12B2dBHhb7H2BH5B4i.pack(_x.bumps_wheeldrops, _x.wall, _x.cliff_left, _x.cliff_front_left, _x.cliff_front_right, _x.cliff_right, _x.virtual_wall, _x.motor_overcurrents, _x.dirt_detector_left, _x.dirt_detector_right, _x.remote_opcode, _x.buttons, _x.distance, _x.angle, _x.charging_state, _x.voltage, _x.current, _x.temperature, _x.charge, _x.capacity, _x.wall_signal, _x.cliff_left_signal, _x.cliff_front_left_signal, _x.cliff_front_right_signal, _x.cliff_right_signal, _x.user_digital_outputs, _x.user_digital_inputs, _x.user_analog_input, _x.charging_sources_available, _x.oi_mode, _x.song_number, _x.song_playing, _x.number_of_stream_packets, _x.requested_velocity, _x.requested_radius, _x.requested_right_velocity, _x.requested_left_velocity))
+      buff.write(_struct_12B2dBHhb7H2BH5B8i.pack(_x.bumps_wheeldrops, _x.wall, _x.cliff_left, _x.cliff_front_left, _x.cliff_front_right, _x.cliff_right, _x.virtual_wall, _x.motor_overcurrents, _x.dirt_detector_left, _x.dirt_detector_right, _x.remote_opcode, _x.buttons, _x.distance, _x.angle, _x.charging_state, _x.voltage, _x.current, _x.temperature, _x.charge, _x.capacity, _x.wall_signal, _x.cliff_left_signal, _x.cliff_front_left_signal, _x.cliff_front_right_signal, _x.cliff_right_signal, _x.user_digital_outputs, _x.user_digital_inputs, _x.user_analog_input, _x.charging_sources_available, _x.oi_mode, _x.song_number, _x.song_playing, _x.number_of_stream_packets, _x.requested_velocity, _x.requested_radius, _x.requested_right_velocity, _x.requested_left_velocity, _x.encoder_counts_right, _x.encoder_counts_left, _x.distance_right, _x.distance_left))
     except struct.error as se: self._check_types(se)
     except TypeError as te: self._check_types(te)
 
@@ -334,8 +350,8 @@ string frame_id
         self.header.frame_id = str[start:end]
       _x = self
       start = end
-      end += 73
-      (_x.bumps_wheeldrops, _x.wall, _x.cliff_left, _x.cliff_front_left, _x.cliff_front_right, _x.cliff_right, _x.virtual_wall, _x.motor_overcurrents, _x.dirt_detector_left, _x.dirt_detector_right, _x.remote_opcode, _x.buttons, _x.distance, _x.angle, _x.charging_state, _x.voltage, _x.current, _x.temperature, _x.charge, _x.capacity, _x.wall_signal, _x.cliff_left_signal, _x.cliff_front_left_signal, _x.cliff_front_right_signal, _x.cliff_right_signal, _x.user_digital_outputs, _x.user_digital_inputs, _x.user_analog_input, _x.charging_sources_available, _x.oi_mode, _x.song_number, _x.song_playing, _x.number_of_stream_packets, _x.requested_velocity, _x.requested_radius, _x.requested_right_velocity, _x.requested_left_velocity,) = _struct_12B2dBHhb7H2BH5B4i.unpack(str[start:end])
+      end += 89
+      (_x.bumps_wheeldrops, _x.wall, _x.cliff_left, _x.cliff_front_left, _x.cliff_front_right, _x.cliff_right, _x.virtual_wall, _x.motor_overcurrents, _x.dirt_detector_left, _x.dirt_detector_right, _x.remote_opcode, _x.buttons, _x.distance, _x.angle, _x.charging_state, _x.voltage, _x.current, _x.temperature, _x.charge, _x.capacity, _x.wall_signal, _x.cliff_left_signal, _x.cliff_front_left_signal, _x.cliff_front_right_signal, _x.cliff_right_signal, _x.user_digital_outputs, _x.user_digital_inputs, _x.user_analog_input, _x.charging_sources_available, _x.oi_mode, _x.song_number, _x.song_playing, _x.number_of_stream_packets, _x.requested_velocity, _x.requested_radius, _x.requested_right_velocity, _x.requested_left_velocity, _x.encoder_counts_right, _x.encoder_counts_left, _x.distance_right, _x.distance_left,) = _struct_12B2dBHhb7H2BH5B8i.unpack(str[start:end])
       self.wall = bool(self.wall)
       self.cliff_left = bool(self.cliff_left)
       self.cliff_front_left = bool(self.cliff_front_left)
@@ -364,7 +380,7 @@ string frame_id
         length = len(_x)
       buff.write(struct.pack('<I%ss'%length, length, _x))
       _x = self
-      buff.write(_struct_12B2dBHhb7H2BH5B4i.pack(_x.bumps_wheeldrops, _x.wall, _x.cliff_left, _x.cliff_front_left, _x.cliff_front_right, _x.cliff_right, _x.virtual_wall, _x.motor_overcurrents, _x.dirt_detector_left, _x.dirt_detector_right, _x.remote_opcode, _x.buttons, _x.distance, _x.angle, _x.charging_state, _x.voltage, _x.current, _x.temperature, _x.charge, _x.capacity, _x.wall_signal, _x.cliff_left_signal, _x.cliff_front_left_signal, _x.cliff_front_right_signal, _x.cliff_right_signal, _x.user_digital_outputs, _x.user_digital_inputs, _x.user_analog_input, _x.charging_sources_available, _x.oi_mode, _x.song_number, _x.song_playing, _x.number_of_stream_packets, _x.requested_velocity, _x.requested_radius, _x.requested_right_velocity, _x.requested_left_velocity))
+      buff.write(_struct_12B2dBHhb7H2BH5B8i.pack(_x.bumps_wheeldrops, _x.wall, _x.cliff_left, _x.cliff_front_left, _x.cliff_front_right, _x.cliff_right, _x.virtual_wall, _x.motor_overcurrents, _x.dirt_detector_left, _x.dirt_detector_right, _x.remote_opcode, _x.buttons, _x.distance, _x.angle, _x.charging_state, _x.voltage, _x.current, _x.temperature, _x.charge, _x.capacity, _x.wall_signal, _x.cliff_left_signal, _x.cliff_front_left_signal, _x.cliff_front_right_signal, _x.cliff_right_signal, _x.user_digital_outputs, _x.user_digital_inputs, _x.user_analog_input, _x.charging_sources_available, _x.oi_mode, _x.song_number, _x.song_playing, _x.number_of_stream_packets, _x.requested_velocity, _x.requested_radius, _x.requested_right_velocity, _x.requested_left_velocity, _x.encoder_counts_right, _x.encoder_counts_left, _x.distance_right, _x.distance_left))
     except struct.error as se: self._check_types(se)
     except TypeError as te: self._check_types(te)
 
@@ -393,8 +409,8 @@ string frame_id
         self.header.frame_id = str[start:end]
       _x = self
       start = end
-      end += 73
-      (_x.bumps_wheeldrops, _x.wall, _x.cliff_left, _x.cliff_front_left, _x.cliff_front_right, _x.cliff_right, _x.virtual_wall, _x.motor_overcurrents, _x.dirt_detector_left, _x.dirt_detector_right, _x.remote_opcode, _x.buttons, _x.distance, _x.angle, _x.charging_state, _x.voltage, _x.current, _x.temperature, _x.charge, _x.capacity, _x.wall_signal, _x.cliff_left_signal, _x.cliff_front_left_signal, _x.cliff_front_right_signal, _x.cliff_right_signal, _x.user_digital_outputs, _x.user_digital_inputs, _x.user_analog_input, _x.charging_sources_available, _x.oi_mode, _x.song_number, _x.song_playing, _x.number_of_stream_packets, _x.requested_velocity, _x.requested_radius, _x.requested_right_velocity, _x.requested_left_velocity,) = _struct_12B2dBHhb7H2BH5B4i.unpack(str[start:end])
+      end += 89
+      (_x.bumps_wheeldrops, _x.wall, _x.cliff_left, _x.cliff_front_left, _x.cliff_front_right, _x.cliff_right, _x.virtual_wall, _x.motor_overcurrents, _x.dirt_detector_left, _x.dirt_detector_right, _x.remote_opcode, _x.buttons, _x.distance, _x.angle, _x.charging_state, _x.voltage, _x.current, _x.temperature, _x.charge, _x.capacity, _x.wall_signal, _x.cliff_left_signal, _x.cliff_front_left_signal, _x.cliff_front_right_signal, _x.cliff_right_signal, _x.user_digital_outputs, _x.user_digital_inputs, _x.user_analog_input, _x.charging_sources_available, _x.oi_mode, _x.song_number, _x.song_playing, _x.number_of_stream_packets, _x.requested_velocity, _x.requested_radius, _x.requested_right_velocity, _x.requested_left_velocity, _x.encoder_counts_right, _x.encoder_counts_left, _x.distance_right, _x.distance_left,) = _struct_12B2dBHhb7H2BH5B8i.unpack(str[start:end])
       self.wall = bool(self.wall)
       self.cliff_left = bool(self.cliff_left)
       self.cliff_front_left = bool(self.cliff_front_left)
@@ -407,5 +423,5 @@ string frame_id
       raise genpy.DeserializationError(e) #most likely buffer underfill
 
 _struct_I = genpy.struct_I
-_struct_12B2dBHhb7H2BH5B4i = struct.Struct("<12B2dBHhb7H2BH5B4i")
 _struct_3I = struct.Struct("<3I")
+_struct_12B2dBHhb7H2BH5B8i = struct.Struct("<12B2dBHhb7H2BH5B8i")

@@ -65,6 +65,7 @@ from turtlebot_node.msg import TurtlebotSensorState, Drive, Turtle
 from turtlebot_node.srv import SetTurtlebotMode,SetTurtlebotModeResponse, SetDigitalOutputs, SetDigitalOutputsResponse
 from turtlebot_node.diagnostics import TurtlebotDiagnostics
 from turtlebot_node.gyro import TurtlebotGyro
+from turtlebot_node.compass import TurtleCompass
 import turtlebot_node.robot_types as robot_types
 from turtlebot_node.covariances import \
      ODOM_POSE_COVARIANCE, ODOM_POSE_COVARIANCE2, ODOM_TWIST_COVARIANCE, ODOM_TWIST_COVARIANCE2
@@ -105,6 +106,11 @@ class TurtlebotNode(object):
             self._gyro = TurtlebotGyro()
         else:
             self._gyro = None
+        
+        if self.has_compass:
+            self._compass = TurtleCompass()
+        else:
+            self._compass = None
             
         dynamic_reconfigure.server.Server(TurtleBotConfig, self.reconfigure)
 
@@ -152,6 +158,7 @@ class TurtlebotNode(object):
         self.update_rate = rospy.get_param('~update_rate', self.default_update_rate)
         self.drive_mode = rospy.get_param('~drive_mode', 'twist')
         self.has_gyro = rospy.get_param('~has_gyro', True)
+        self.has_compass = rospy.get_param('~has_compass', False)
         self.odom_angular_scale_correction = rospy.get_param('~odom_angular_scale_correction', 1.0)
         self.odom_linear_scale_correction = rospy.get_param('~odom_linear_scale_correction', 1.0)
         self.cmd_vel_timeout = rospy.Duration(rospy.get_param('~cmd_vel_timeout', 0.6))
@@ -167,6 +174,7 @@ class TurtlebotNode(object):
         rospy.loginfo("update_rate: %s"%(self.update_rate))
         rospy.loginfo("drive mode: %s"%(self.drive_mode))
         rospy.loginfo("has gyro: %s"%(self.has_gyro))
+        rospy.loginfo("has compass: %s"%(self.has_compass))
 
     def _init_pubsub(self):
         self.joint_states_pub = rospy.Publisher('joint_states', JointState)
@@ -198,6 +206,9 @@ class TurtlebotNode(object):
         self.has_gyro = config['has_gyro']
         if self.has_gyro:
             self._gyro.reconfigure(config, level)
+        self.has_compass = config['has_compass']
+        if self.has_compass:
+            self._compass.reconfigure(config, level)
         self.odom_angular_scale_correction = config['odom_angular_scale_correction']
         self.odom_linear_scale_correction = config['odom_linear_scale_correction']
         self.cmd_vel_timeout = rospy.Duration(config['cmd_vel_timeout'])
@@ -316,6 +327,8 @@ class TurtlebotNode(object):
         self.sensor_handler.get_all(sensor_state)
         if self._gyro:
             self._gyro.update_calibration(sensor_state)
+        elif self._compass:
+            self._compass.update_calibration(sensor_state)
 
     def spin(self):
 
@@ -394,6 +407,8 @@ class TurtlebotNode(object):
             self._diagnostics.publish(s, self._gyro)
             if self._gyro:
                 self._gyro.publish(s, last_time)
+            elif self._compass:
+                self._compass.publish(s, last_time)
 
             # ACT
             if self.req_cmd_vel is not None:
@@ -506,8 +521,15 @@ class TurtlebotNode(object):
 def connected_file():
     return os.path.join(roslib.rosenv.get_ros_home(), 'turtlebot-connected')
 
+def onShutdown():
+    global c
+    rospy.loginfo("set robot to passive on shutdown")
+    c.robot.passive()
+
 def turtlebot_main(argv):
+    global c
     c = TurtlebotNode()
+    rospy.on_shutdown(onShutdown)
     while not rospy.is_shutdown():
         try:
             # This sleep throttles reconnecting of the driver.  It
@@ -535,7 +557,6 @@ def turtlebot_main(argv):
             try:
                 os.remove(connected_file())
             except Exception: pass
-
 
 if __name__ == '__main__':
     turtlebot_main(sys.argv)

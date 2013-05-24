@@ -69,6 +69,8 @@ class TurtleCompass():
     def handleSerial(self, line):
         if (len(line) > 0):
             rospy.loginfo("received: %s" %line)
+            msg = json.loads(line)
+            print msg.theta
             # self.heading = float(line)
             return
 
