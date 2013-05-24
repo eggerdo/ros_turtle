@@ -39,6 +39,8 @@ import math
 import copy
 import sensor_msgs.msg
 import PyKDL
+import json
+import time
 from SerialGateway import SerialGateway
 
 class TurtleCompass():
@@ -56,6 +58,12 @@ class TurtleCompass():
         self.imu_pub = rospy.Publisher('imu/data', sensor_msgs.msg.Imu)
         # self.imu_pub_raw = rospy.Publisher('imu/raw', sensor_msgs.msg.Imu)
 
+        self.imu_diagnose_data = sensor_msgs.msg.Imu(header=rospy.Header(frame_id="gyro_link"))
+        self.imu_diagnose_data.orientation_covariance = [1e6, 0, 0, 0, 1e6, 0, 0, 0, 1e-6]
+        self.imu_diagnose_data.angular_velocity_covariance = [1e6, 0, 0, 0, 1e6, 0, 0, 0, 1e-6]
+        self.imu_diagnose_data.linear_acceleration_covariance = [-1,0,0,0,0,0,0,0,0]
+        self.imu_diagnose_pub = rospy.Publisher('imu_diagnose', sensor_msgs.msg.Imu)
+
         self.port = rospy.get_param('~port', '/dev/ttyACM0')
         self.baudRate = rospy.get_param('~baudRate', 115200)
         self.serialHandler = SerialGateway(self.port, self.baudRate, self.handleSerial)
@@ -68,9 +76,20 @@ class TurtleCompass():
 
     def handleSerial(self, line):
         if (len(line) > 0):
-            rospy.loginfo("received: %s" %line)
-            msg = json.loads(line)
-            print msg.theta
+            # rospy.loginfo("received: %s" %line)
+            try:
+                self.data = json.loads(line)
+                self.imu_diagnose_data.header.stamp = rospy.Time.now()
+                (self.imu_diagnose_data.orientation.x, self.imu_diagnose_data.orientation.y, self.imu_diagnose_data.orientation.z, self.imu_diagnose_data.orientation.w) = PyKDL.Rotation.RotZ(self.data['compass']['theta']).GetQuaternion()
+                self.imu_diagnose_data.angular_velocity.x = float(self.data['gyro']['x']*(math.pi/180.0))
+                self.imu_diagnose_data.angular_velocity.y = float(self.data['gyro']['y']*(math.pi/180.0))
+                self.imu_diagnose_data.angular_velocity.z = float(self.data['gyro']['z']*(math.pi/180.0))
+                self.imu_diagnose_data.linear_acceleration.x = float(self.data['accelero']['x'])
+                self.imu_diagnose_data.linear_acceleration.y = float(self.data['accelero']['y'])
+                self.imu_diagnose_data.linear_acceleration.z = float(self.data['accelero']['z'])
+                self.imu_diagnose_pub.publish(self.imu_diagnose_data)
+            except Exception, e:
+                print e
             # self.heading = float(line)
             return
 
@@ -104,10 +123,9 @@ class TurtleCompass():
         current_time = sensor_state.header.stamp
         dt = (current_time - last_time).to_sec()
         past_orientation = self.orientation
-        self.orientation = self.heading
+        self.orientation = self.data['compass']['theta']
         self.imu_data.header.stamp =  sensor_state.header.stamp
-        self.imu_data.angular_velocity.z = (self.orientation - past_orientation) / dt
-        self.imu_data.orientation = self.orientation
+        self.imu_data.angular_velocity.z = self.data['gyro']['z']
         #print orientation
         (self.imu_data.orientation.x, self.imu_data.orientation.y, self.imu_data.orientation.z, self.imu_data.orientation.w) = PyKDL.Rotation.RotZ(self.orientation).GetQuaternion()
         self.imu_pub.publish(self.imu_data)

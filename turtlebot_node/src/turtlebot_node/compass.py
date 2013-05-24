@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Software License Agreement (BSD License)
 #
 # Copyright (c) 2011, Willow Garage, Inc.
@@ -48,9 +47,6 @@ class TurtleCompass():
         self.orientation = 0.0
         self.cal_buffer = []
         self.cal_buffer_length = 1000
-        self.orient_offset = 0.0
-        # self.cal_buffer =[]
-        # self.cal_buffer_length = 1000
         self.imu_data = sensor_msgs.msg.Imu(header=rospy.Header(frame_id="gyro_link"))
         self.imu_data.orientation_covariance = [1e6, 0, 0, 0, 1e6, 0, 0, 0, 1e-6]
         self.imu_data.angular_velocity_covariance = [1e6, 0, 0, 0, 1e6, 0, 0, 0, 1e-6]
@@ -118,7 +114,6 @@ class TurtleCompass():
             if len(self.cal_buffer) > self.cal_buffer_length:
                 del self.cal_buffer[:-self.cal_buffer_length]
             self.cal_offset = sum(self.cal_buffer)/len(self.cal_buffer)
-        pass
             
     def publish(self, sensor_state, last_time):
         if self.cal_offset == 0:
@@ -126,14 +121,12 @@ class TurtleCompass():
             return
 
         current_time = sensor_state.header.stamp
-
         dt = (current_time - last_time).to_sec()
         # self.orientation = -1.0 * (self.data['compass']['heading'] - self.orient_offset)*(math.pi/180.0)
         self.imu_data.header.stamp =  sensor_state.header.stamp
         self.imu_data.angular_velocity.z = float(self.data['gyro']['z'] - self.cal_offset)*(math.pi/180.0)
 
         self.orientation += self.imu_data.angular_velocity.z * dt
-
         #print orientation
         (self.imu_data.orientation.x, self.imu_data.orientation.y, self.imu_data.orientation.z, self.imu_data.orientation.w) = PyKDL.Rotation.RotZ(self.orientation).GetQuaternion()
         self.imu_pub.publish(self.imu_data)
